@@ -46,7 +46,7 @@ function userPrompt() {
         if (answers.product % 1 === 0 && answers.quantity % 1 === 0) {
             checkStock(answers.product, answers.quantity);
         } else {
-            console.log("Please enter an integer");
+            console.log("\nUse only integers in your choices\n");
             userPrompt();
         }
     });
@@ -82,12 +82,11 @@ function fulfillOrder(productID, totalPrice, newStock) {
         ],
         function (err, res) {
             if (err) throw err;
-            // console.log(res.affectedRows + " products updated!\n");
         }
     );
 
     // console.log(query.sql);
-    console.log("\nTotal Price: " + totalPrice);
+    console.log("\nTotal Price: $" + totalPrice + "\n");
     setTimeout(continueShopping, 2500);
 }
 
