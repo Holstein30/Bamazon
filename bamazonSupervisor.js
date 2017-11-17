@@ -45,14 +45,14 @@ function chooseAction(action) {
 function departmentSales() {
     connection.query(
         "SELECT departments.department_id, departments.department_name, departments.over_head_costs, " +
-        "product_sales, product_sales - over_head_costs AS total_profit FROM products " +
-        "RIGHT JOIN departments ON products.department_name = departments.department_name;",
+        "SUM(product_sales) AS sum_sales, SUM(product_sales) - over_head_costs AS total_profit FROM products " +
+        "RIGHT JOIN departments ON products.department_name = departments.department_name GROUP BY department_name ORDER BY department_id;",
         function (err, result) {
             if (err) throw err;
             console.log("|| Department ID || Department Name || Over Head Costs || Product Sales || Total Profit ||");
             for (var i in result) {
                 console.log("|| " + result[i].department_id + "             || " + result[i].department_name +
-                    "     || " + result[i].over_head_costs + "            || " + result[i].product_sales +
+                    "     || " + result[i].over_head_costs + "            || " + result[i].sum_sales +
                     "          || " + result[i].total_profit + "         ||");
             }
             setTimeout(finished, 5000);
