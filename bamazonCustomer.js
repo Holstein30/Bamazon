@@ -54,7 +54,7 @@ function userPrompt() {
 
 function checkStock(productID, quantity) {
     connection.query(
-        "SELECT price, stock_quantity FROM products WHERE ?", {
+        "SELECT price, stock_quantity, product_sales FROM products WHERE ?", {
             item_id: productID
         },
         function (err, result) {
@@ -63,18 +63,25 @@ function checkStock(productID, quantity) {
                 console.log("Insufficient Stock for this Item!");
                 continueShopping();
             } else {
-                var totalPrice = result[0].price * quantity;
+                var totalPrice = parseFloat((result[0].price * quantity).toFixed(2));
                 var newStock = result[0].stock_quantity - quantity;
-                fulfillOrder(productID, totalPrice, newStock);
+                if (result[0].product_sales === "undefined") {
+                    var currentSales = 0.00;
+                } else {
+                    var currentSales = result[0].product_sales;
+                }
+                var totalSales = totalPrice + currentSales;
+                fulfillOrder(productID, totalPrice, newStock, totalSales);
             }
         });
 }
 
-function fulfillOrder(productID, totalPrice, newStock) {
-    console.log("Updating quantities...\n");
+function fulfillOrder(productID, totalPrice, newStock, totalSales) {
+    console.log("Updating...\n");
     var query = connection.query(
         "UPDATE products SET ? WHERE ?", [{
-                stock_quantity: newStock
+                stock_quantity: newStock,
+                product_sales: totalSales
             },
             {
                 item_id: productID
