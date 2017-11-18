@@ -1,5 +1,6 @@
 var mysql = require("mysql");
 var inquire = require("inquirer");
+var Table = require('cli-table');
 
 var regex = /^\d+(?:\.\d{0,2})$/;
 
@@ -49,14 +50,30 @@ function departmentSales() {
         "RIGHT JOIN departments ON products.department_name = departments.department_name GROUP BY department_name ORDER BY department_id;",
         function (err, result) {
             if (err) throw err;
+            // var table1 = new Table({
+            //     head: ['Department ID', 'Department Name, Over Head Costs, Product Sales, Total Profit'],
+            //     colWidths: [50, 50, 50, 50, 50]
+            // });
+            // console.log(table1.options.head);
             console.log("|| Department ID || Department Name || Over Head Costs || Product Sales || Total Profit ||");
             for (var i in result) {
+                if (result[i].total_profit === null) {
+                    var profit = 0.00;
+                } else {
+                    var profit = result[i].total_profit;
+                }
+
+                // table1.push(
+                //     [result[i].department_id, result[i].department_name, result[i].over_head_costs, result[i].sum_sales, profit]
+                // );
+                // console.log(table1[i]);
                 console.log("|| " + result[i].department_id + "             || " + result[i].department_name +
-                    "     || " + result[i].over_head_costs + "            || " + result[i].sum_sales +
-                    "          || " + result[i].total_profit + "         ||");
+                    "     || " + result[i].over_head_costs + "             || " + result[i].sum_sales +
+                    "          || " + profit + "         ||");
             }
             setTimeout(finished, 5000);
         }
+
     )
 }
 
